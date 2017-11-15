@@ -11,6 +11,7 @@ package ab.demo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,7 +40,7 @@ public class ClientNaiveAgent implements Runnable {
 	/**
 	 * Constructor using the default IP
 	 * */
-	public ClientNaiveAgent() {
+	public ClientNaiveAgent() throws IOException {
 		// the default ip is the localhost
 		ar = new ClientActionRobotJava("127.0.0.1");
 		tp = new TrajectoryPlanner();
@@ -51,7 +52,7 @@ public class ClientNaiveAgent implements Runnable {
 	/**
 	 * Constructor with a specified IP
 	 * */
-	public ClientNaiveAgent(String ip) {
+	public ClientNaiveAgent(String ip) throws IOException {
 		ar = new ClientActionRobotJava(ip);
 		tp = new TrajectoryPlanner();
 		randomGenerator = new Random();
@@ -59,7 +60,7 @@ public class ClientNaiveAgent implements Runnable {
 		firstShot = true;
 
 	}
-	public ClientNaiveAgent(String ip, int id)
+	public ClientNaiveAgent(String ip, int id) throws IOException
 	{
 		ar = new ClientActionRobotJava(ip);
 		tp = new TrajectoryPlanner();
@@ -349,7 +350,7 @@ public class ClientNaiveAgent implements Runnable {
 		return Math.sqrt((double) ((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y)* (p1.y - p2.y)));
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 
 		ClientNaiveAgent na;
 		if(args.length > 0)

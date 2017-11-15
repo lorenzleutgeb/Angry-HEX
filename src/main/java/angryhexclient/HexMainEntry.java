@@ -12,13 +12,12 @@
  *******************************************************************************/
 package angryhexclient;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import ab.demo.other.ClientActionRobotJava;
 import angryhexclient.util.LogFormatter;
 import angryhexclient.util.OutConsoleHandler;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HexMainEntry {
 
@@ -42,14 +41,6 @@ public class HexMainEntry {
 
 		HexMainEntry.Log.info("starting HexMainEntry main");
 		try {
-
-			// Rips off any dlvhex2 processes which were left
-			HexMainEntry.Log.info("killing leftover processes");
-			try {
-				Runtime.getRuntime().exec("killall -9 dlvhex2");
-			} catch (final IOException e1) {
-				HexMainEntry.Log.warning("cannot killall dlvhex2");
-			}
 
 			// check arguments for ip address and initial level
 			byte initialLevel = 1;
@@ -75,11 +66,11 @@ public class HexMainEntry {
 				new Thread(ha).start();
 
 			} catch (final Exception e) {
-				HexMainEntry.Log.severe("Cannot init agent: " + e.getMessage());
+				HexMainEntry.Log.log(Level.SEVERE, "Cannot init agent: " + e.getMessage(), e);
 			}
 
 		} catch (final Exception e) {
-			HexMainEntry.Log.severe("General Error: " + e.getMessage());
+			HexMainEntry.Log.log(Level.SEVERE, "General Error: " + e.getMessage(), e);
 		}
 	}
 }

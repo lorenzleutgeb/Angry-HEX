@@ -4,6 +4,8 @@ import ab.planner.abTrajectory;
 import ab.utils.GameImageRecorder;
 import ab.vision.ShowSeg;
 
+import java.io.IOException;
+
 /*****************************************************************************
  ** ANGRYBIRDS AI AGENT FRAMEWORK
  ** Copyright (c) 2014, XiaoYu (Gary) Ge, Jochen Renz,Stephen Gould,
@@ -15,7 +17,7 @@ import ab.vision.ShowSeg;
 
 public class MainEntry {
 	// the entry of the software.
-	public static void main(String args[])
+	public static void main(String args[]) throws IOException
 	{
 		String command = "";
 		if(args.length > 0)

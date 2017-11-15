@@ -26,6 +26,7 @@ package ab.demo.other;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,14 +47,14 @@ public class ClientActionRobotJava extends ClientActionRobot {
 	 */
 	GameImageRecorder rec;
 	
-	public ClientActionRobotJava(GameImageRecorder r, String ip)
+	public ClientActionRobotJava(GameImageRecorder r, String ip) throws IOException
 	{
 		super(ip);
 		rec = r;
 	}
 	
 	
-	public ClientActionRobotJava(String ip) {
+	public ClientActionRobotJava(String ip) throws IOException {
 		super(ip);
 	}
    

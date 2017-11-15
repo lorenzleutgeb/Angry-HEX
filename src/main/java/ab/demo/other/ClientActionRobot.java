@@ -57,34 +57,27 @@ public class ClientActionRobot {
 	 */
 	GameImageRecorder rec;
 
-	public ClientActionRobot(GameImageRecorder r, String... ip)
+	public ClientActionRobot(GameImageRecorder r, String... ip) throws IOException
 	{
 		this(ip);
 		rec = r;
 	}
 
 	
-	public ClientActionRobot(String... ip) {
+	public ClientActionRobot(String... ip) throws IOException {
 		String _ip = "localhost";
 		if (ip.length > 0) {
 			_ip = ip[0];
 		}
-		try {
-			// 1. creating a socket to connect to the server
-			requestSocket = new Socket(_ip, 2004);
-			requestSocket.setReceiveBufferSize(100000);
-			System.out.println("Connected to " + _ip + " in port 2004");
-			out = requestSocket.getOutputStream();
-			out.flush();
-			in = requestSocket.getInputStream();
-		} catch (UnknownHostException unknownHost) {
-			System.err.println("You are trying to connect to an unknown host!");
-		} catch (IOException ioException) {
-			ioException.printStackTrace();
-		}
+		// 1. creating a socket to connect to the server
+		requestSocket = new Socket(_ip, 2004);
+		requestSocket.setReceiveBufferSize(100000);
+		System.out.println("Connected to " + _ip + " in port 2004");
+		out = requestSocket.getOutputStream();
+		out.flush();
+		in = requestSocket.getInputStream();
 	}
 
-	
 	public synchronized BufferedImage doScreenShot_() {
 		BufferedImage bfImage = null;
 		try {
@@ -371,7 +364,7 @@ public class ClientActionRobot {
 		return buffer;	
 	}
 	
-	public static void main(String args[])
+	public static void main(String args[]) throws IOException
 	{
 		ClientActionRobot robot = new ClientActionRobot();
 		byte[] id = {1,2,3,4};

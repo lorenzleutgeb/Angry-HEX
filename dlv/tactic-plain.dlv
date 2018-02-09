@@ -1,0 +1,24 @@
+firstbelow(Upper,Down) :- &firstbelow[Upper,dObject,hills](Down), objectType(Upper,_).
+
+%---------------------------------------------------------------------%
+% Compute the shootable objects (objects that can be hit by the bird) %
+%---------------------------------------------------------------------%
+%%% FIXME: revise the &shootable atom
+shootable(O, T, Shift, Up) :- &shootable[O,T,V,Sx,Sy,Sw,Sh,B,dObject,hills](O,Shift,Up),
+		           birdType(B), velocity(V), objectType(O,Type), slingshot(Sx,Sy,Sw,Sh), trajectory(T).
+
+%---------------------------------------------------------------------------------%
+% When targeting X, Z is the Y-th object hit in the trajectory T (starts from 0)? %
+%---------------------------------------------------------------------------------%
+next(X,Y,Z,T,Center) :- shootable(X,T,Center,_), &next[X,Center,T,V,Sx,Sy,Sw,Sh,dObject,hills](Y,Z), velocity(V), slingshot(Sx,Sy,Sw,Sh), T != egg.
+next(X,Y,Z,T,Upper)  :- shootable(X,T,_,Upper),  &next[X,Upper,T,V,Sx,Sy,Sw,Sh,dObject,hills](Y,Z), velocity(V), slingshot(Sx,Sy,Sw,Sh), T != egg.
+
+%--------------------------------------------------------------------------------------------------------------------%
+% Specify if an object can push another; "pushability" requires some minimum distance and objects at geometric range %
+%--------------------------------------------------------------------------------------------------------------------%
+canPush(ObjA,ObjB) :- &canpush[dObject,hills](ObjA,ObjB).
+
+%------------------------------------------------------------------%
+% Computes if the removal of Y makes X fall in internal simulation %
+%------------------------------------------------------------------%
+ot(Y,X) :- &on_top_all[dObject,hills](X,Y).

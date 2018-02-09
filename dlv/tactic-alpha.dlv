@@ -1,0 +1,61 @@
+% External Atoms:
+%
+% Done:
+% - firstbelow
+% - canpush
+% - on_top_all
+%
+% TODO:
+% - shootable
+% - next
+%
+% Vision Information that moved inside world(W):
+% Sx,Sy,Sw,Sh,
+
+% * dObject(O,T,A,B,C,D,E) :- boundingBox(O,T,A,B,C,D,E), T != hill, T != ground.
+% hills
+
+firstbelow(Upper,Down) :- &firstbelow[Upper,dObject,hills](Down), objectType(Upper,_).
+
+%---------------------------------------------------------------------%
+% Compute the shootable objects (objects that can be hit by the bird) %
+%---------------------------------------------------------------------%
+%%% FIXME: revise the &shootable atom
+shootable(O,T,Shift,Up) :-
+    world(W),
+    slingshot(S),
+    &shootable[O,T,V,S,B,dObject,hills](O,Shift,Up),
+    birdType(B),
+    velocity(V),
+    objectType(O,Type),
+    slingshot(Sx,Sy,Sw,Sh),
+    trajectory(T).
+
+%---------------------------------------------------------------------------------%
+% When targeting X, Z is the Y-th object hit in the trajectory T (starts from 0)? %
+%---------------------------------------------------------------------------------%
+next(X,Y,Z,T,Center) :-
+    shootable(X,T,Center,_),
+    velocity(V),
+    slingshot(S),
+    world(W),
+    &next[X,Center,T,V,S,W](Y,Z),
+    T != egg.
+
+next(X,Y,Z,T,Upper)  :-
+    shootable(X,T,_,Upper),
+    velocity(V),
+    slingshot(S),
+    world(W),
+    &next[X,Upper,T,V,S,W](Y,Z),
+    T != egg.
+
+%--------------------------------------------------------------------------------------------------------------------%
+% Specify if an object can push another; "pushability" requires some minimum distance and objects at geometric range %
+%--------------------------------------------------------------------------------------------------------------------%
+canPush(A,B) :- world(W), &canpush[W](A,B).
+
+%------------------------------------------------------------------%
+% Computes if the removal of Y makes X fall in internal simulation %
+%------------------------------------------------------------------%
+ot(B,A) :- world(W), &on_top_all[W](A,B).

@@ -67,22 +67,6 @@ offset(Upper)   :-  shootable(O,low,_,Upper),  target(O,low), instability(O,I). 
 %offset(Center)  :-  shootable(O,low,Center,_),  target(O,low), instability(O,I), I < 80.
 offset(Center)  :-  shootable(O,high,Center,_),  target(O,high).
 
-
-%---------------------------------------------------------------------------------%
-% When targeting X, Z is the Y-th object hit in the trajectory T (starts from 0)? %
-%---------------------------------------------------------------------------------%
-next(X,Y,Z,T,Center) :- shootable(X,T,Center,_), &next[X,Center,T,V,Sx,Sy,Sw,Sh,dObject,hills](Y,Z), velocity(V), slingshot(Sx,Sy,Sw,Sh), T != egg.
-next(X,Y,Z,T,Upper)  :- shootable(X,T,_,Upper),  &next[X,Upper,T,V,Sx,Sy,Sw,Sh,dObject,hills](Y,Z), velocity(V), slingshot(Sx,Sy,Sw,Sh), T != egg.
-
-
-%---------------------------------------------------------------------%
-% Compute the shootable objects (objects that can be hit by the bird) %
-%---------------------------------------------------------------------%
-%%% FIXME: revise the &shootable atom 
-shootable(O, T, Shift, Up) :- &shootable[O,T,V,Sx,Sy,Sw,Sh,B,dObject,hills](O,Shift,Up),
-		           birdType(B), velocity(V), objectType(O,Type), slingshot(Sx,Sy,Sw,Sh), trajectory(T).
-
-
 %------------------------------------------------------------------------%
 % Needed to include objects that can be hit by the egg of the White Bird %
 %------------------------------------------------------------------------%
@@ -126,13 +110,6 @@ directDamage(ObjB,P,Energy) :- Tr != egg, outerTarget(ObjC,ObjT,Tr,Off), objectT
 instability(O,I) :- &stability[W,H,A](V), dObject(O,_,_,_,W,H,A), I = 100-V.
 pushability(O,I) :- instability(O,I), I >= MinPushability, objectType(O,Type), minPushability(Type,MinPushability).
 
-
-%--------------------------------------------------------------------------------------------------------------------%
-% Specify if an object can push another; "pushability" requires some minimum distance and objects at geometric range %
-%--------------------------------------------------------------------------------------------------------------------%
-canPush(ObjA,ObjB) :- &canpush[dObject,hills](ObjA,ObjB).
-
-
 %------------------------------------------------------------------------------------------------------%
 % Compute the probability of push damage, following the push chain, it works only for low trajectories %
 % pushDamage(Obj,intrinsicDAMAGELikelihood,NextObjectDamageLikelihood)                                 %
@@ -151,7 +128,6 @@ pushDamage(ObjB,P_A,P) :- pushDamage(ObjA,_,P_A), P_A > 0, canPush(ObjA,ObjB),
 %------------------------------------------------------------------%
 % Computes if the removal of Y makes X fall in internal simulation %
 %------------------------------------------------------------------%
-ot(Y,X) :- &on_top_all[dObject,hills](X,Y).
 ot(Y,Z) :- ot(Y,X), ot(X,Z).
 
 
@@ -186,8 +162,6 @@ damage(fall,Obj,P) :- fallDamage(Obj,P).
 existsDamage(T,Obj) :- damage(T,Obj,P).
 notExistsDamage(T,Obj) :- not existsDamage(T,Obj), damageType(T), objectType(Obj,_).
 
-firstbelow(Upper,Down) :- &firstbelow[Upper,dObject,hills](Down), objectType(Upper,_).
-
 %---------------------------------------%
 % The objects that we prefer to destroy %
 %---------------------------------------%
@@ -207,39 +181,3 @@ maxDamage(pushNdirect,Obj,M) :- maxDamage(push,Obj,M), maxDamage(direct,Obj,M1),
 maxDamage(pushNdirect,Obj,M1) :- maxDamage(push,Obj,M), maxDamage(direct,Obj,M1), M < M1.
 maxDamage(pushNdirect,Obj,M) :- maxDamage(direct,Obj,M), notExistsDamage(push,Obj).
 maxDamage(pushNdirect,Obj,M) :- maxDamage(push,Obj,M), notExistsDamage(direct,Obj).
-
-
-%------------------------------------------------------%
-% Weak constraints about the different types of damage %
-%------------------------------------------------------%
-%%% FIXME: Try to "generalize" the weak constraints
-%%% FIXME: Should we "precompute" the Malus values? "malus(P,M) :- pr(P), MalusTemp = 100 - P, M = MalusTemp / 10."
-:~ notExistsDamage(direct,Obj), notExistsDamage(push,Obj), goodObject(Obj). [10:4]
-:~ notExistsDirectDamage(Obj), notExistsPushDamage(Obj). [10:1]
-
-:~ maxDamage(pushNdirect,Obj,P), goodObject(Obj), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:4]
-:~ maxDamage(pushNdirect,Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:1]
-
-:~ notExistsDamage(fall,Obj), goodObject(Obj). [10:4]
-:~ notExistsDamage(fall,Obj). [10:1]
-
-:~ maxDamage(fall,Obj,P), goodObject(Obj), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:4]
-:~ maxDamage(fall,Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:1]
-
-%pigDistance(O,D) :- dObject(O,pig,X,Y,_,_,_), Xquad = X * X, Yquad = Y * Y, D = Xquad + Yquad.
-%pigDistance(O,D) :- dObject(O,pig,X,Y,_,_,_), D = X + Y.
-%:~ target(Pig,T), pigDistance(Pig,D). [D:2]
-
-
-%-----------------------------------------------------------------------------------%
-% Weak constraints about the damage of something falling down to a Pig or a TNT box %
-%-----------------------------------------------------------------------------------%
-%%% FIXME: Should we have to consider that the object can be destroyed before falling down to the Pig/TNT?
-%%% FIXME: Try to "generalize" the fallsOn_Damage
-abovePigOrTNT(Under,100) :- firstbelow(Under,Down), goodObject(Down).
-abovePigOrTNT(Under,P) :- firstbelow(Under,Down), abovePigOrTNT(Down,P_D), Ptemp = P_D * 95, P = Ptemp / 100.
-fallsOnPigOrTNTDamage(Obj,P_B) :- maxDamage(fall,Obj,P_N), abovePigOrTNT(Under,P_P), Ptemp = P_N * P_P, P_B = Ptemp / 100.
-existsFallsOnPigOrTNTDamage(Obj) :- fallsOnPigOrTNTDamage(Obj,_).
-notExistsFallsOnPigOrTNTDamage(Obj) :- not existsFallsPigOrTNTPigDamage(Obj), objectType(Obj,_).
-:~ notExistsFallsOnPigOrTNTDamage(Obj). [10:3]
-:~ fallsOnPigOrTNTDamage(Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:3]

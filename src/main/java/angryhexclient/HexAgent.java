@@ -37,7 +37,7 @@ import ab.vision.Vision;
 import angryhexclient.strategy.BenchmarkStrategy;
 import angryhexclient.strategy.DeclarativeStrategy;
 import angryhexclient.strategy.StrategyManager;
-import angryhexclient.tactic.DeclarativeTactic;
+import angryhexclient.tactic.DeclarativeHexTactic;
 import angryhexclient.tactic.Tactic;
 import angryhexclient.tactic.TacticManager;
 import angryhexclient.util.DebugUtils;
@@ -359,7 +359,7 @@ public class HexAgent implements Runnable {
 
 	private void initAgent() {
 		tacticManager = new TacticManager();
-		currentTactic = new DeclarativeTactic(ar, tacticManager);
+		currentTactic = new DeclarativeHexTactic(ar, tacticManager);
 
 		DebugUtils.init(strategyManager, tacticManager);
 		Memory.init();

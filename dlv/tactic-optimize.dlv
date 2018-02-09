@@ -1,0 +1,35 @@
+% Weak constraints about the different types of damage
+
+%------------------------------------------------------
+
+%%% FIXME: Try to "generalize" the weak constraints
+%%% FIXME: Should we "precompute" the Malus values? "malus(P,M) :- pr(P), MalusTemp = 100 - P, M = MalusTemp / 10."
+:~ notExistsDamage(direct,Obj), notExistsDamage(push,Obj), goodObject(Obj). [10:4]
+:~ notExistsDirectDamage(Obj), notExistsPushDamage(Obj). [10:1]
+
+:~ maxDamage(pushNdirect,Obj,P), goodObject(Obj), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:4]
+:~ maxDamage(pushNdirect,Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:1]
+
+:~ notExistsDamage(fall,Obj), goodObject(Obj). [10:4]
+:~ notExistsDamage(fall,Obj). [10:1]
+
+:~ maxDamage(fall,Obj,P), goodObject(Obj), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:4]
+:~ maxDamage(fall,Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:1]
+
+%pigDistance(O,D) :- dObject(O,pig,X,Y,_,_,_), Xquad = X * X, Yquad = Y * Y, D = Xquad + Yquad.
+%pigDistance(O,D) :- dObject(O,pig,X,Y,_,_,_), D = X + Y.
+%:~ target(Pig,T), pigDistance(Pig,D). [D:2]
+
+
+%-----------------------------------------------------------------------------------%
+% Weak constraints about the damage of something falling down to a Pig or a TNT box %
+%-----------------------------------------------------------------------------------%
+%%% FIXME: Should we have to consider that the object can be destroyed before falling down to the Pig/TNT?
+%%% FIXME: Try to "generalize" the fallsOn_Damage
+abovePigOrTNT(Under,100) :- firstbelow(Under,Down), goodObject(Down).
+abovePigOrTNT(Under,P) :- firstbelow(Under,Down), abovePigOrTNT(Down,P_D), Ptemp = P_D * 95, P = Ptemp / 100.
+fallsOnPigOrTNTDamage(Obj,P_B) :- maxDamage(fall,Obj,P_N), abovePigOrTNT(Under,P_P), Ptemp = P_N * P_P, P_B = Ptemp / 100.
+existsFallsOnPigOrTNTDamage(Obj) :- fallsOnPigOrTNTDamage(Obj,_).
+notExistsFallsOnPigOrTNTDamage(Obj) :- not existsFallsPigOrTNTPigDamage(Obj), objectType(Obj,_).
+:~ notExistsFallsOnPigOrTNTDamage(Obj). [10:3]
+:~ fallsOnPigOrTNTDamage(Obj,P), MalusTemp = 100 - P, Malus = MalusTemp / 10. [Malus:3]

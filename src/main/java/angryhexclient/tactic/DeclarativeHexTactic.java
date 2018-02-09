@@ -27,9 +27,9 @@ import angryhexclient.TargetReasoner;
 import angryhexclient.VisionFact;
 import angryhexclient.util.DebugUtils;
 
-public class DeclarativeTactic extends Tactic {
+public class DeclarativeHexTactic extends Tactic {
 
-	public DeclarativeTactic(final ClientActionRobotJava ar, final TacticManager manager) {
+	public DeclarativeHexTactic(final ClientActionRobotJava ar, final TacticManager manager) {
 		super(ar, manager);
 	}
 

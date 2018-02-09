@@ -1,16 +1,8 @@
-% Fixed knowledge
-
-
-%-----------------------------------%
-% Possible trajectories of the shot %
-%-----------------------------------%
+% Possible trajectories of the shot
 trajectory(low).
 trajectory(high).
 
-
-%-------------------------------------------------------------%
-% Percentage perturbations on tap time depending on bird type %
-%-------------------------------------------------------------%
+% Percentage perturbations on tap time depending on bird type
 tap(85) :- birdType(redbird).
 tap(90)  :- birdType(yellowbird), target(_,high).
 tap(88)  :- birdType(yellowbird), target(_,low).
@@ -18,10 +10,7 @@ tap(85)  :- birdType(bluebird).
 tap(120) :- birdType(blackbird).
 tap(300)  :- birdType(whitebird). % A white not deploying eggs should not tap
 
-
-%------------------------------------------------------------------------------%
-% Probability of being destroyed for each type of bird and each type of object %
-%------------------------------------------------------------------------------%
+% Probability of being destroyed for each type of bird and each type of object
 damageProbability(redbird,pig,100).
 damageProbability(bluebird,pig,100).
 damageProbability(yellowbird,pig,100).
@@ -58,11 +47,7 @@ damageProbability(whitebird,ice,80).
 
 damageProbability(egg,X,Y) :- damageProbability(blackbird,X,Y1), Y = Y1 -10.
 
-
-
-%----------------------------------------------------------------------%
-% Importance of fall down (bigger it's better) for each type of object %
-%----------------------------------------------------------------------%
+% Importance of fall down (bigger it's better) for each type of object
 materialFallImportance(wood,90).
 materialFallImportance(ice,80).
 materialFallImportance(stone,100).
@@ -70,10 +55,7 @@ materialFallImportance(stone,100).
 materialFallImportance(pig,100).
 materialFallImportance(tnt,100).
 
-
-%--------------------------------------------------------------------%
-% Energy lost by each type of bird after destroying a type of object %
-%--------------------------------------------------------------------%
+% Energy lost by each type of bird after destroying a type of object
 energyLoss(redbird,pig,90).
 energyLoss(bluebird,pig,90).
 energyLoss(yellowbird,pig,90).
@@ -105,20 +87,14 @@ energyLoss(whitebird,ice,10).
 energyLoss(blackbird,wood,80).
 energyLoss(blackbird,ice,80).
 
-
-%--------------------------------------------------------------------------%
-% Minimun value of stability in order to be pushed for each type of object %
-%--------------------------------------------------------------------------%
+% Minimum value of stability in order to be pushed for each type of object
 minPushability(wood,70).
 minPushability(stone,90).
 minPushability(ice,70).
 minPushability(pig,0).
 minPushability(tnt,20).
 
-
-%-----------------------------%
-% Define the types of damages %
-%-----------------------------%
+% Define the types of damages
 damageType(direct).
 damageType(push).
 damageType(fall).

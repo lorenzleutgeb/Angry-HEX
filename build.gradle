@@ -20,5 +20,8 @@ dependencies {
 
     compile group: 'commons-codec', name: 'commons-codec', version: '1.7'
 
+    compile group: 'org.jbox2d', name: 'jbox2d-library', version: '2.2.1.1'
+
     compile files('lib/WebSocket.jar')
+    compile files('lib/alpha-bundled.jar')
 }
